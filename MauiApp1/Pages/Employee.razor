@@ -1,0 +1,72 @@
+﻿@page "/fetchEmployee"
+@using MauiApp1.Data;
+@using MauiApp1.Data.Model;
+@inject EmployeeServices EmployeeService;
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+<h1>Employee Data</h1>
+
+<p>This component demonstrates fetching data from a service.</p>
+
+
+@if (employees == null)
+{
+	<p><em>Loading...</em></p>
+}
+else{
+	<input type="text" @oninput="@((e)=>SearchEmployee((string)e.Value))" placeholder="Enter name to search..." />
+
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Name</th>
+				<th><button @onclick="SortListInDesc"><i class="fa-solid fa-sort-down"></i></button>Age<button @onclick="SortListByAge"><i class="fa-sharp fa-solid fa-sort-up"></i></button></th>
+				<th>Gender</th>
+				<th>Phone Number</th>
+				<th>Department</th>
+				<th>Hired Date</th>
+				<th>Position</th>
+				<th>Email</th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var employee in employees)
+			{
+				<tr>
+					<td>@employee.name</td>
+					<td>@employee.age</td>
+					<td>@employee.gender</td>
+					<td>@employee.phone</td>
+					<td>@employee.department</td>
+					<td>@employee.createdAt</td>
+					<td>@employee.position</td>
+					<td>@employee.email</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+}
+
+@code {
+	private List<EmployeeModel> employees;
+	protected override async Task OnInitializedAsync()
+	{
+		employees =  EmployeeServices.Employees();
+	}
+
+	protected async Task SearchEmployee(string name)
+	{
+		Console.WriteLine("This is getting called with name: " + name);
+		employees =  EmployeeServices.FilterEmployeeByName(name);
+	}
+
+	protected async Task SortListByAge()
+	{
+		employees = EmployeeServices.SortListByAge();
+	}
+
+	protected async Task SortListInDesc()
+	{
+		employees =  EmployeeServices.SortListInDesc();
+	}
+
+}
